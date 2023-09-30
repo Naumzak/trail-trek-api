@@ -10,8 +10,3 @@ services:
       POSTGRES_PASSWORD: "root"
     ports:
       - "5432:5432"
-  redis:
-    image: redis:latest
-    restart: always
-    ports:
-      - "6380:6379"

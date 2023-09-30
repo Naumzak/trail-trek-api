@@ -1,26 +1,15 @@
-import { Column, Entity, OneToMany } from 'typeorm';
-import { UserGameEntity } from '../../game/entities/user-game.entity';
-import { CharacterEntity } from '../../character/entities/character.entity';
-import { BaseEntity } from '../../common/entity/base.entity';
+import { Column, PrimaryGeneratedColumn } from 'typeorm';
 
-@Entity('user')
-export class UserEntity extends BaseEntity {
-  @Column()
-  name: string;
+export class User {
+  @PrimaryGeneratedColumn()
+  id: number;
 
-  @Column({ unique: true })
+  @Column({ type: 'varchar', length: 15 })
+  username: string;
+
+  @Column({ type: 'varchar', length: 41 })
   email: string;
 
-  @Column()
+  @Column({ type: 'varchar' })
   password: string;
-
-  @OneToMany(() => UserGameEntity, (userGame) => userGame.user, {
-    cascade: true,
-  })
-  public userGames: UserGameEntity[];
-
-  @OneToMany(() => CharacterEntity, (character) => character.user, {
-    cascade: true,
-  })
-  public userCharacters: CharacterEntity[];
 }
