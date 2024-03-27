@@ -1,26 +1,9 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { UserModule } from './modules/user/user.module';
-import { AuthModule } from './modules/auth/auth.module';
-import { TypeOrmModule } from '@nestjs/typeorm';
 
 @Module({
-  imports: [
-    TypeOrmModule.forRoot({
-      type: 'postgres',
-      host: 'localhost',
-      port: 5432,
-      password: 'root',
-      username: 'root',
-      entities: [],
-      database: 'trail-trek',
-      synchronize: true,
-      logging: true,
-    }),
-    UserModule,
-    AuthModule,
-  ],
+  imports: [],
   controllers: [AppController],
   providers: [AppService],
 })
