@@ -15,7 +15,10 @@ export class UserGameService {
     userId,
     connectionString,
   }: IAddUserToGameParams): Promise<UserGameEntity> {
-    const game = await this.gameDao.findOneBy({ connectionString });
+    const game = await this.gameDao.findOne({
+      relations: ['userGames'],
+      where: { connectionString },
+    });
 
     const userAlreadyExist = game.userGames.some(
       (userGame) => userGame.userId === userId,

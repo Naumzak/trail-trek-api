@@ -2,9 +2,10 @@ import { Field, ObjectType } from '@nestjs/graphql';
 import { CharacterClassOutput } from '../../class/outputs/character-class';
 import { RaceOutput } from '../../race/outputs/race';
 import { SubraceOutput } from '../../subrace/outputs/subrace';
+import { EquipmentOutput } from '../../equipment/outputs/equipment';
 
 @ObjectType()
-export class CreateCharacterOutput {
+export class GetCharacterOutput {
   @Field(() => String)
   id: string;
 
@@ -22,4 +23,7 @@ export class CreateCharacterOutput {
 
   @Field(() => SubraceOutput)
   subrace: SubraceOutput;
+
+  @Field(() => [EquipmentOutput])
+  equipments: EquipmentOutput[];
 }

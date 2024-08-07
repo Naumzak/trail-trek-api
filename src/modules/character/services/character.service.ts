@@ -7,6 +7,7 @@ import { SubraceService } from '../../subrace/services/subrace.service';
 import { UserService } from '../../user/services/user.service';
 import { ICreateCharacterParams } from '../interfaces/create-character-params';
 import { IGetCharactersParams } from '../interfaces/get-characters-params';
+import { EquipmentService } from '../../equipment/services/equipment.service';
 
 @Injectable()
 export class CharacterService {
@@ -16,6 +17,7 @@ export class CharacterService {
     private readonly subraceService: SubraceService,
     private readonly characterClassService: CharacterClassService,
     public readonly userService: UserService,
+    public readonly equipmentService: EquipmentService,
   ) {}
 
   async createCharacter(
@@ -37,13 +39,22 @@ export class CharacterService {
       userId: user.id,
     });
 
-    await this.characterDao.save(character);
-
-    return character;
+    return this.characterDao.save(character);
   }
 
   getCharacters({ userId }: IGetCharactersParams): Promise<CharacterEntity[]> {
-    const characters = this.characterDao.findBy({ userId });
+    const characters = this.characterDao.find({
+      where: { userId },
+      relations: ['race', 'class', 'subrace'],
+    });
     return characters;
+  }
+
+  async getCharacter({ characterId }) {
+    const character = await this.characterDao.findOne({
+      where: { id: characterId },
+      relations: ['race', 'class', 'subrace', 'equipments'],
+    });
+    return character;
   }
 }

@@ -23,7 +23,9 @@ import { JwtService } from '@nestjs/jwt';
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
       subscriptions: {
         'graphql-ws': true,
+        'subscriptions-transport-ws': true,
       },
+      installSubscriptionHandlers: true,
     }),
     UserModule,
     GameModule,
