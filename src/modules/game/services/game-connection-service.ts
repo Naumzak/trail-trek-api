@@ -1,26 +1,34 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
+import { RedisService } from '../../redis/services/redis.service';
+import { IGameUser } from '../interfaces/game-user';
 
 @Injectable()
 export class GameConnectionService {
-  private readonly games = new Map<
-    string,
-    Array<{ characterId: string; userId: string }>
-  >();
+  constructor(private readonly redisService: RedisService) {}
 
   async connectToGame({ userId, gameId, characterId }) {
-    if (!this.games.has(gameId)) {
-      this.games.set(gameId, []);
+    const gameData = await this.redisService.get(gameId);
+
+    if (!gameData) {
+      await this.redisService.set(gameId, []);
     }
 
-    const game = this.games.get(gameId);
+    const users = gameData ? (JSON.parse(gameData) as IGameUser[]) : [];
 
-    if (game.some((user) => user.userId === userId)) {
-      return { userId, gameId };
+    const userAlreadyExist = users.some((user) => user.userId === userId);
+
+    if (userAlreadyExist) {
+      const userIndex = users.findIndex((user) => user.userId === userId);
+
+      if (userIndex !== -1) {
+        users.splice(userIndex, 1);
+      }
     }
 
-    this.games.get(gameId).push({ userId, characterId });
+    users.push({ userId, characterId });
+    await this.redisService.set(gameId, users);
 
-    return { userId, gameId };
+    return users;
   }
 
   async disconnectFromGame({
@@ -30,25 +38,35 @@ export class GameConnectionService {
     userId: string;
     gameId: string;
   }) {
-    if (!this.games.has(gameId)) {
-      return;
+    const gameData = await this.redisService.get(gameId);
+
+    if (!gameData) {
+      throw new BadRequestException('Wrong game Id');
     }
 
-    const game = this.games.get(gameId);
-    const userIndex = game.findIndex((user) => user.userId === userId);
+    const users = JSON.parse(gameData) as IGameUser[];
+
+    const userIndex = users.findIndex((user) => user.userId === userId);
 
     if (userIndex !== -1) {
-      game.splice(userIndex, 1);
+      users.splice(userIndex, 1);
     }
 
-    if (game.length === 0) {
-      this.games.delete(gameId);
+    if (users.length === 0) {
+      await this.redisService.delete(gameId);
     }
+
+    return users;
   }
 
-  async getUsersForGame(
-    gameId: string,
-  ): Promise<{ characterId: string; userId: string }[]> {
-    return Array.from(this.games.get(gameId) || []);
+  async getUsersForGame(gameId: string): Promise<IGameUser[]> {
+    const gameData = await this.redisService.get(gameId);
+
+    if (!gameData) {
+      throw new BadRequestException('Wrong game Id');
+    }
+
+    const users = JSON.parse(gameData) as IGameUser[];
+    return users;
   }
 }

@@ -11,9 +11,14 @@ import { UserGameResolver } from './resolvers/user-game';
 import { UserModule } from '../user/user.module';
 import { JwtService } from '@nestjs/jwt';
 import { GameConnectionService } from './services/game-connection-service';
+import { RedisModule } from '../redis/redis.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([GameEntity, UserGameEntity]), UserModule],
+  imports: [
+    TypeOrmModule.forFeature([GameEntity, UserGameEntity]),
+    UserModule,
+    RedisModule,
+  ],
   providers: [
     JwtService,
     GameDao,
