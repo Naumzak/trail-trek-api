@@ -1,6 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 import { EquipmentCategory } from '../enum/equipmentCategory';
 import { IsEnum } from 'class-validator';
+import { CostOutput } from './cost';
 
 @ObjectType()
 export class EquipmentOutput {
@@ -16,4 +17,7 @@ export class EquipmentOutput {
 
   @Field(() => String)
   description: string;
+
+  @Field(() => CostOutput)
+  cost: CostOutput;
 }

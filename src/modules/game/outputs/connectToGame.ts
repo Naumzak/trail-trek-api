@@ -1,10 +1,10 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
 @ObjectType()
-export class UserGameOutput {
+export class ConnectToGameOutput {
   @Field(() => String)
   userId: string;
 
   @Field(() => String)
-  gameId: string;
+  characterId: string;
 }

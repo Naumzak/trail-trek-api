@@ -10,6 +10,7 @@ import { ClassModule } from '../class/class.module';
 import { UserModule } from '../user/user.module';
 import { CharacterResolver } from './resolvers/character';
 import { JwtService } from '@nestjs/jwt';
+import { EquipmentModule } from '../equipment/equipment.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { JwtService } from '@nestjs/jwt';
     SubraceModule,
     ClassModule,
     UserModule,
+    EquipmentModule,
   ],
   providers: [CharacterDao, CharacterService, CharacterResolver, JwtService],
   exports: [],

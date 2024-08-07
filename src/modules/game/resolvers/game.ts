@@ -1,4 +1,4 @@
-import { Args, Context, Mutation, Resolver } from '@nestjs/graphql';
+import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { GameService } from '../services/game.service';
 import { GameOutput } from '../outputs/game';
 import { Auth } from '../../auth/decorators/auth.decorator';
@@ -16,5 +16,12 @@ export class GameResolver {
   ): Promise<GameOutput> {
     const userId = context.req.user?.id;
     return this.gameService.createGame({ ...input, userId });
+  }
+
+  @Query(() => [GameOutput], { name: 'games' })
+  @Auth()
+  async getGames(@Context() context): Promise<GameOutput[]> {
+    const userId = context.req.user?.id;
+    return this.gameService.getGames({ userId });
   }
 }

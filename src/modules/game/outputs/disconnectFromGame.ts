@@ -1,10 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
 @ObjectType()
-export class UserGameOutput {
+export class DisconnectFromGameOutput {
   @Field(() => String)
   userId: string;
-
-  @Field(() => String)
-  gameId: string;
 }

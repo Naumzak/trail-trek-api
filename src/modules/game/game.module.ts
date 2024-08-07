@@ -9,16 +9,20 @@ import { UserGameService } from './services/user-game.service';
 import { GameResolver } from './resolvers/game';
 import { UserGameResolver } from './resolvers/user-game';
 import { UserModule } from '../user/user.module';
+import { JwtService } from '@nestjs/jwt';
+import { GameConnectionService } from './services/game-connection-service';
 
 @Module({
   imports: [TypeOrmModule.forFeature([GameEntity, UserGameEntity]), UserModule],
   providers: [
+    JwtService,
     GameDao,
     UserGameDao,
     GameService,
     UserGameService,
     GameResolver,
     UserGameResolver,
+    GameConnectionService,
   ],
   exports: [],
 })
