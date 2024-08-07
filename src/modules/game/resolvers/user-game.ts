@@ -15,6 +15,8 @@ import { DisconnectFromGameOutput } from '../outputs/disconnectFromGame';
 import { PubSub } from 'graphql-subscriptions';
 import { GameConnectionService } from '../services/game-connection-service';
 import { withCancel } from '../../utils/withCancel';
+import { UserConnectedToGame } from '../inputs/user-connected-to-game';
+import { UserDisconnectedFromGame } from '../inputs/user-disconnected-from-game';
 
 const pubSub = new PubSub();
 
@@ -47,7 +49,7 @@ export class UserGameResolver {
     const userId = context.req.user?.id;
     const { gameId, characterId } = input;
 
-    await this.gameConnectionService.connectToGame({
+    const users = await this.gameConnectionService.connectToGame({
       gameId,
       userId,
       characterId,
@@ -57,31 +59,29 @@ export class UserGameResolver {
       userConnected: { userId, gameId, characterId },
     });
 
-    const users = await this.gameConnectionService.getUsersForGame(gameId);
     return users;
   }
 
   @Subscription(() => ConnectToGameOutput, {
     filter: (payload, variables) => {
-      return payload.userConnected.gameId === variables.gameId;
+      return payload.userConnected.gameId === variables.input.gameId;
     },
   })
-  userConnected(@Args('gameId') gameId: string, @Context() context) {
-    const userId = context.req.user?.id;
-
+  userConnected(@Args('input') input: UserConnectedToGame) {
+    const { gameId, userId } = input;
     return withCancel(pubSub.asyncIterator('userConnected'), () =>
       pubSub.publish('userDisconnected', {
-        userConnected: { userId, gameId },
+        userDisconnected: { userId, gameId },
       }),
     );
   }
 
   @Subscription(() => DisconnectFromGameOutput, {
     filter: (payload, variables) => {
-      return payload.userDisconnected.gameId === variables.gameId;
+      return payload.userDisconnected.gameId === variables.input.gameId;
     },
   })
-  userDisconnected(@Args('gameId') gameId: string) {
+  userDisconnected(@Args('input') input: UserDisconnectedFromGame) {
     return pubSub.asyncIterator('userDisconnected');
   }
 }

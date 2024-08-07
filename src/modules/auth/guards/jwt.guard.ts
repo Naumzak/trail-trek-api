@@ -24,7 +24,7 @@ export class JWTGuard implements CanActivate {
   ): string | undefined {
     const ctx = GqlExecutionContext.create(context);
     const req = ctx.getContext().req;
-    const [type, token] = req.headers.authorization?.split(' ') ?? [];
+    const [type, token] = req?.headers?.authorization?.split(' ') ?? [];
     return type === 'Bearer' ? token : undefined;
   }
 

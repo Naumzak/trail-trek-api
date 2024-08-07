@@ -14,6 +14,7 @@ import { AuthModule } from './modules/auth/auth.module';
 import { SubraceModule } from './modules/subrace/subrace.module';
 import { EquipmentModule } from './modules/equipment/equipment.module';
 import { JwtService } from '@nestjs/jwt';
+import { RedisModule } from './modules/redis/redis.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { JwtService } from '@nestjs/jwt';
       },
       installSubscriptionHandlers: true,
     }),
+    RedisModule,
     UserModule,
     GameModule,
     CharacterModule,
