@@ -1,0 +1,45 @@
+name: Test
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches:
+      - main
+      - dev
+env:
+  JWT_SECRET: "secret_key"
+  POSTGRES_HOST: "127.0.0.1"
+  POSTGRES_PORT: "5433"
+  POSTGRES_USERNAME: "root-test"
+  POSTGRES_PASSWORD: "root-test"
+  POSTGRES_DATABASE: "trail-trek-test"
+
+jobs:
+  integration-tests:
+    timeout-minutes: 10
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:latest
+        env:
+          POSTGRES_USER: root-test
+          POSTGRES_PASSWORD: root-test
+          POSTGRES_DB: trail-trek-test
+        ports:
+          - 5433:5432
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+
+      - name: Install node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22.11.x
+
+      - name: Install dependencies
+        run: yarn
+
+      - name: Run tests
+        run: yarn run test:e2e
