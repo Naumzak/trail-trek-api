@@ -30,7 +30,6 @@ jobs:
           - 5435:5432
       redis:
         image: redis:latest
-        restart: always
         ports:
           - "6380:6379"
 
