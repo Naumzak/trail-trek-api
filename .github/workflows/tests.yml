@@ -28,6 +28,11 @@ jobs:
           POSTGRES_DB: trail-trek-test
         ports:
           - 5435:5432
+      redis:
+        image: redis:latest
+        restart: always
+        ports:
+          - "6380:6379"
 
     steps:
       - name: Checkout
