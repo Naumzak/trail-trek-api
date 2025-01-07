@@ -27,7 +27,7 @@ jobs:
           POSTGRES_PASSWORD: root-test
           POSTGRES_DB: trail-trek-test
         ports:
-          - 5433:5432
+          - 5435:5432
 
     steps:
       - name: Checkout
