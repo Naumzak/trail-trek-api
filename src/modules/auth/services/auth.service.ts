@@ -2,9 +2,9 @@ import { UserService } from '../../user/services/user.service';
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { ILoginParams } from '../interfaces/login-params';
 import { JwtService } from '@nestjs/jwt';
-import { configService } from '../../../utils/config-service';
 import { EnvKey } from '../../../constants/env-keys';
 import { IRegisterParams } from '../interfaces/register-params';
+import { ConfigService } from "@nestjs/config";
 
 @Injectable()
 export class AuthService {
@@ -19,6 +19,7 @@ export class AuthService {
         email: params.email,
         password: params.password,
       });
+       const configService = new ConfigService();
 
       const accessToken = this.jwtService.sign(
         { id: user.id },

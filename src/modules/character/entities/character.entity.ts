@@ -1,10 +1,10 @@
 import { Column, Entity, JoinTable, ManyToMany, ManyToOne } from 'typeorm';
 import { UserEntity } from '../../user/entities/user.entity';
 import { BaseEntity } from '../../common/entity/base.entity';
-import { ClassEntity } from '../../class/entities/class.entity';
-import { RaceEntity } from '../../race/entities/race.entity';
 import { EquipmentEntity } from '../../equipment/entities/equipment.entity';
-import { SubraceEntity } from '../../subrace/entities/subrace.entity';
+import { ClassEntity } from './class.entity';
+import { RaceEntity } from './race.entity';
+import { SubraceEntity } from './subrace.entity';
 
 @Entity('character')
 export class CharacterEntity extends BaseEntity {

@@ -1,8 +1,8 @@
 import { Field, ObjectType } from '@nestjs/graphql';
-import { CharacterClassOutput } from '../../class/outputs/character-class';
-import { RaceOutput } from '../../race/outputs/race';
-import { SubraceOutput } from '../../subrace/outputs/subrace';
 import { EquipmentOutput } from '../../equipment/outputs/equipment';
+import { SubraceOutput } from '../outputs/subrace';
+import { RaceOutput } from '../outputs/race';
+import { CharacterClassOutput } from '../outputs/character-class';
 
 @ObjectType()
 export class GetCharacterOutput {
