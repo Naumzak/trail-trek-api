@@ -25,13 +25,4 @@ export class GameService {
 
     return game;
   }
-
-  async getGames({ userId }): Promise<GameEntity[]> {
-    const games = await this.gameDao.find({
-      relations: ['userGames'],
-      where: { userGames: { userId } },
-    });
-
-    return games;
-  }
 }

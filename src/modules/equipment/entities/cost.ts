@@ -7,7 +7,7 @@ export class Cost {
 
   @Column({
     type: 'enum',
-    enum: CoinType,
+    enum: [CoinType],
   })
   unit: CoinType;
 }

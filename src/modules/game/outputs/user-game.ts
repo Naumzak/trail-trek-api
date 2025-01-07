@@ -1,10 +1,12 @@
 import { Field, ObjectType } from '@nestjs/graphql';
+import { UserOutput } from '../../user/outputs/user';
+import { GameOutput } from './game';
 
 @ObjectType()
 export class UserGameOutput {
-  @Field(() => String)
-  userId: string;
+  @Field(() => UserOutput)
+  user: UserOutput;
 
-  @Field(() => String)
-  gameId: string;
+  @Field(() => GameOutput)
+  game: GameOutput;
 }

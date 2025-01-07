@@ -1,31 +1,12 @@
-import {
-  Args,
-  Context,
-  Mutation,
-  Resolver,
-  Subscription,
-} from '@nestjs/graphql';
+import { Args, Context, Mutation, Resolver } from '@nestjs/graphql';
 import { UserGameService } from '../services/user-game.service';
 import { Auth } from '../../auth/decorators/auth.decorator';
 import { AddUserToGameInput } from '../inputs/add-user-to-game';
 import { UserGameOutput } from '../outputs/user-game';
-import { ConnectToGameOutput } from '../outputs/connectToGame';
-import { ConnectToGameInput } from '../inputs/connect-to-game';
-import { DisconnectFromGameOutput } from '../outputs/disconnectFromGame';
-import { PubSub } from 'graphql-subscriptions';
-import { GameConnectionService } from '../services/game-connection-service';
-import { withCancel } from '../../utils/withCancel';
-import { UserConnectedToGameInput } from '../inputs/user-connected-to-game';
-import { UserDisconnectedFromGameInput } from '../inputs/user-disconnected-from-game';
-
-const pubSub = new PubSub();
 
 @Resolver()
 export class UserGameResolver {
-  constructor(
-    private readonly userGameService: UserGameService,
-    private readonly gameConnectionService: GameConnectionService,
-  ) {}
+  constructor(private readonly userGameService: UserGameService) {}
 
   @Mutation(() => UserGameOutput)
   @Auth()
@@ -38,57 +19,5 @@ export class UserGameResolver {
       userId,
       connectionString: input.connectionString,
     });
-  }
-
-  @Mutation(() => [ConnectToGameOutput])
-  @Auth()
-  async connectToGame(
-    @Args('input') input: ConnectToGameInput,
-    @Context() context,
-  ): Promise<ConnectToGameOutput[]> {
-    const userId = context.req.user?.id;
-    const { gameId, characterId } = input;
-
-    const users = await this.gameConnectionService.connectToGame({
-      gameId,
-      userId,
-      characterId,
-    });
-
-    await pubSub.publish('userConnected', {
-      userConnected: { userId, gameId, characterId },
-    });
-
-    return users;
-  }
-
-  @Subscription(() => ConnectToGameOutput, {
-    filter: (payload, variables) => {
-      return payload.userConnected.gameId === variables.input.gameId;
-    },
-  })
-  @Auth()
-  userConnected(
-    @Args('input') input: UserConnectedToGameInput,
-    @Context() context,
-  ) {
-    const { gameId } = input;
-    const userId = context.req.user?.id;
-
-    return withCancel(pubSub.asyncIterator('userConnected'), async () => {
-      await this.gameConnectionService.disconnectFromGame({ userId, gameId });
-      await pubSub.publish('userDisconnected', {
-        userDisconnected: { userId, gameId },
-      });
-    });
-  }
-
-  @Subscription(() => DisconnectFromGameOutput, {
-    filter: (payload, variables) => {
-      return payload.userDisconnected.gameId === variables.input.gameId;
-    },
-  })
-  userDisconnected(@Args('input') input: UserDisconnectedFromGameInput) {
-    return pubSub.asyncIterator('userDisconnected');
   }
 }

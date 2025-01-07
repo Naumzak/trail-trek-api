@@ -1,0 +1,231 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type UserOutput {
+  id: String!
+  name: String!
+  email: String!
+  password: String!
+}
+
+type UserGameOutput {
+  userId: String!
+  gameId: String!
+}
+
+type GameOutput {
+  id: String!
+  name: String!
+  connectionString: String!
+  userGames: [UserGameOutput!]!
+}
+
+type ConnectToGameOutput {
+  userId: String!
+  characterId: String!
+}
+
+type DisconnectFromGameOutput {
+  userId: String!
+}
+
+type SubraceOutput {
+  id: String!
+  name: String!
+  speed: Float
+  size: Size
+  languages: [Language!]
+}
+
+enum Size {
+  SMALL
+  MEDIUM
+}
+
+enum Language {
+  COMMON
+  DWARVISH
+  ELVISH
+  GIANT
+  GNOMISH
+  GOBLIN
+  HALFLING
+  ORC
+  ABYSSAL
+  CELESTIAL
+  DRACONIC
+  DEEP_SPEECH
+  INFERNAL
+  PRIMORDIAL
+  SYLVAN
+  UNDERCOMMON
+}
+
+type RaceOutput {
+  id: String!
+  image: String!
+  name: String!
+  speed: Float!
+  size: Size!
+  languages: [Language!]!
+  subraces: [SubraceOutput!]
+}
+
+type CharacterClassOutput {
+  id: String!
+  image: String!
+  name: String!
+  hitDice: Dice!
+}
+
+enum Dice {
+  D4
+  D6
+  D8
+  D10
+  D12
+  D20
+}
+
+type CreateCharacterOutput {
+  id: String!
+  name: String!
+  userId: String!
+  class: CharacterClassOutput!
+  race: RaceOutput!
+  subrace: SubraceOutput!
+}
+
+type CostOutput {
+  quantity: Float!
+  unit: CoinType!
+}
+
+enum CoinType {
+  COPPER
+  SILVER
+  GOLD
+  PLATINUM
+}
+
+type EquipmentOutput {
+  id: String!
+  name: String!
+  category: EquipmentCategory!
+  description: String!
+  cost: CostOutput!
+}
+
+enum EquipmentCategory {
+  ADVENTURING_GEAR
+  TOOLS
+  MOUNTS_AND_VEHICLES
+  WEAPON
+  ARMOR
+}
+
+type GetCharacterOutput {
+  id: String!
+  name: String!
+  userId: String!
+  class: CharacterClassOutput!
+  race: RaceOutput!
+  subrace: SubraceOutput!
+  equipments: [EquipmentOutput!]!
+}
+
+type LoginOutput {
+  accessToken: String!
+}
+
+type RegisterOutput {
+  userId: String!
+}
+
+type Query {
+  users: [UserOutput!]!
+  user(input: GetUserInput!): UserOutput!
+  games: [GameOutput!]!
+  races: [RaceOutput!]!
+  characters: [CreateCharacterOutput!]!
+  charactersByGameId(input: GetCharactersByGameId!): [CreateCharacterOutput!]!
+  character(input: GetCharacterInput!): GetCharacterOutput!
+  classes: [CharacterClassOutput!]!
+}
+
+input GetUserInput {
+  id: String!
+}
+
+input GetCharactersByGameId {
+  gameId: String!
+}
+
+input GetCharacterInput {
+  characterId: String!
+}
+
+type Mutation {
+  updateUser(input: UpdateUserInput!): UserOutput!
+  deleteUser(input: DeleteUserInput!): UserOutput!
+  createGame(input: CreateGameInput!): GameOutput!
+  addUserToGame(input: AddUserToGameInput!): UserGameOutput!
+  connectToGame(input: ConnectToGameInput!): [ConnectToGameOutput!]!
+  createCharacter(input: CreateCharacterInput!): CreateCharacterOutput!
+  login(input: LoginInput!): LoginOutput!
+  register(input: RegisterInput!): RegisterOutput!
+}
+
+input UpdateUserInput {
+  id: String!
+  name: String
+}
+
+input DeleteUserInput {
+  id: String!
+}
+
+input CreateGameInput {
+  name: String!
+}
+
+input AddUserToGameInput {
+  connectionString: String!
+}
+
+input ConnectToGameInput {
+  gameId: String!
+  characterId: String!
+}
+
+input CreateCharacterInput {
+  name: String!
+  classId: String!
+  raceId: String!
+  subraceId: String!
+}
+
+input LoginInput {
+  email: String!
+  password: String!
+}
+
+input RegisterInput {
+  name: String!
+  email: String!
+  password: String!
+}
+
+type Subscription {
+  userConnected(input: UserConnectedToGameInput!): ConnectToGameOutput!
+  userDisconnected(input: UserDisconnectedFromGameInput!): DisconnectFromGameOutput!
+}
+
+input UserConnectedToGameInput {
+  gameId: String!
+}
+
+input UserDisconnectedFromGameInput {
+  gameId: String!
+}

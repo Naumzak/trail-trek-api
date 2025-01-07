@@ -23,7 +23,6 @@ export class UserResolver {
   async updateUser(@Args('input') input: UpdateUserInput): Promise<UserOutput> {
     return this.userService.updateUser(input);
   }
-
   @Mutation(() => UserOutput)
   async deleteUser(@Args('input') input: DeleteUserInput): Promise<UserOutput> {
     return this.userService.deleteUser(input);

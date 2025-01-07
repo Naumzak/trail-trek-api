@@ -1,10 +1,10 @@
-import { Column, Entity, JoinTable, ManyToMany, ManyToOne } from 'typeorm';
+import { Column, Entity, JoinTable, ManyToOne } from 'typeorm';
 import { UserEntity } from '../../user/entities/user.entity';
 import { BaseEntity } from '../../common/entity/base.entity';
+import { ClassEntity } from '../../class/entities/class.entity';
+import { RaceEntity } from '../../race/entities/race.entity';
 import { EquipmentEntity } from '../../equipment/entities/equipment.entity';
-import { ClassEntity } from './class.entity';
-import { RaceEntity } from './race.entity';
-import { SubraceEntity } from './subrace.entity';
+import { SubraceEntity } from '../../subrace/entities/subrace.entity';
 
 @Entity('character')
 export class CharacterEntity extends BaseEntity {
@@ -36,11 +36,10 @@ export class CharacterEntity extends BaseEntity {
   })
   public subrace: SubraceEntity;
 
-  @ManyToMany(() => EquipmentEntity, (equipment) => equipment.characters)
   @JoinTable({
-    // name: 'character_equipments',
-    // joinColumn: { name: 'character_id', referencedColumnName: 'id' },
-    // inverseJoinColumn: { name: 'equipment_id', referencedColumnName: 'id' },
+    name: 'character_equipments',
+    joinColumn: { name: 'character_id', referencedColumnName: 'id' },
+    inverseJoinColumn: { name: 'equipment_id', referencedColumnName: 'id' },
   })
   equipments: EquipmentEntity[];
 }

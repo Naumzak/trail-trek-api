@@ -1,5 +1,4 @@
 import { Field, ObjectType } from '@nestjs/graphql';
-import { UserGameOutput } from './user-game';
 
 @ObjectType()
 export class GameOutput {
@@ -11,7 +10,4 @@ export class GameOutput {
 
   @Field(() => String)
   connectionString: string;
-
-  @Field(() => [UserGameOutput])
-  userGames: any;
 }
