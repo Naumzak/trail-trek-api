@@ -9,5 +9,5 @@ services:
       POSTGRES_USER: "root-test"
       POSTGRES_PASSWORD: "root-test"
     ports:
-      - "5433:5432"
+      - "5435:5432"
     hostname: '127.0.0.1'
