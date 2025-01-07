@@ -3,7 +3,7 @@ import { BaseEntity } from '../../common/entity/base.entity';
 import { CharacterEntity } from '../../character/entities/character.entity';
 import { Size } from '../../common/enum/size';
 import { Language } from '../../common/enum/language';
-import { SubraceEntity } from '../../subrace/entities/subrace.entity';
+import { SubraceEntity } from './subrace.entity';
 
 @Entity('race')
 export class RaceEntity extends BaseEntity {

@@ -2,7 +2,7 @@ import { Field, ObjectType } from '@nestjs/graphql';
 import { Size } from '../../common/enum/size';
 import { Language } from '../../common/enum/language';
 import { IsEnum } from 'class-validator';
-import { SubraceOutput } from '../../subrace/outputs/subrace';
+import { SubraceOutput } from "./subrace";
 
 @ObjectType()
 export class RaceOutput {

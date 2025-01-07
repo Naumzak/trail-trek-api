@@ -1,0 +1,13 @@
+version: '3.0'
+
+services:
+  postgres-test:
+    image: postgres:13.3
+    restart: always
+    environment:
+      POSTGRES_DB: "trail-trek-test"
+      POSTGRES_USER: "root-test"
+      POSTGRES_PASSWORD: "root-test"
+    ports:
+      - "5433:5432"
+    hostname: '127.0.0.1'

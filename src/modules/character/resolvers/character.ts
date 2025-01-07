@@ -5,6 +5,7 @@ import { Auth } from '../../auth/decorators/auth.decorator';
 import { CreateCharacterInput } from '../inputs/create-character';
 import { GetCharacterInput } from '../inputs/get-character';
 import { GetCharacterOutput } from '../outputs /get-character';
+import { GetCharactersByGameId } from '../inputs/get-characters-by-game-id';
 
 @Resolver()
 export class CharacterResolver {
@@ -15,6 +16,17 @@ export class CharacterResolver {
   async getCharacters(@Context() context): Promise<CreateCharacterOutput[]> {
     const userId = context.req.user?.id;
     return this.characterService.getCharacters({ userId });
+  }
+
+  @Query(() => [CreateCharacterOutput], { name: 'charactersByGameId' })
+  @Auth()
+  async getCharactersByGameId(
+    @Context() context,
+    @Args('input') input: GetCharactersByGameId,
+  ): Promise<CreateCharacterOutput[]> {
+    const userId = context.req.user?.id;
+    const gameId = input.gameId;
+    return this.characterService.getCharactersByGameId({ userId, gameId });
   }
 
   @Mutation(() => CreateCharacterOutput)

@@ -5,10 +5,10 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { EnvKey } from 'src/constants/env-keys';
-import { configService } from 'src/utils/config-service';
+import { EnvKey } from '../../../constants/env-keys';
 import { Request } from 'express';
 import { GqlExecutionContext } from '@nestjs/graphql';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class JWTGuard implements CanActivate {
@@ -17,6 +17,14 @@ export class JWTGuard implements CanActivate {
   private extractTokenFromHeader(request: Request): string | undefined {
     const [type, token] = request?.headers.authorization?.split(' ') ?? [];
     return type === 'Bearer' ? token : undefined;
+  }
+
+  private extractTokenFromWsContext(
+    context: ExecutionContext,
+  ): string | undefined {
+    const ctx = GqlExecutionContext.create(context);
+    const token = ctx.getContext()?.req?.connectionParams?.authToken;
+    return token;
   }
 
   private extractTokenFromContext(
@@ -32,17 +40,18 @@ export class JWTGuard implements CanActivate {
     const request = context.switchToHttp().getRequest();
     const token =
       this.extractTokenFromHeader(request) ||
-      this.extractTokenFromContext(context);
+      this.extractTokenFromContext(context) ||
+      this.extractTokenFromWsContext(context);
 
     if (!token) {
       throw new UnauthorizedException();
     }
     try {
+      const configService = new ConfigService();
       const payload = await this.jwtService.verify(token, {
         secret: configService.get(EnvKey.JWT_SECRET),
       });
 
-      // В зависимости от типа контекста (HTTP или GraphQL)
       if (context.getType() === 'http') {
         request.user = payload;
       } else {

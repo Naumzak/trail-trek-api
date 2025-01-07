@@ -3,7 +3,7 @@ import { CharacterClassOutput } from '../outputs/character-class';
 import { CharacterClassService } from '../services/character-class.service';
 
 @Resolver()
-export class RaceResolver {
+export class CharacterClassResolver {
   constructor(private readonly characterClassService: CharacterClassService) {}
 
   @Query(() => [CharacterClassOutput], { name: 'classes' })

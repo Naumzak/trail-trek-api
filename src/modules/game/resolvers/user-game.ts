@@ -15,8 +15,8 @@ import { DisconnectFromGameOutput } from '../outputs/disconnectFromGame';
 import { PubSub } from 'graphql-subscriptions';
 import { GameConnectionService } from '../services/game-connection-service';
 import { withCancel } from '../../utils/withCancel';
-import { UserConnectedToGame } from '../inputs/user-connected-to-game';
-import { UserDisconnectedFromGame } from '../inputs/user-disconnected-from-game';
+import { UserConnectedToGameInput } from '../inputs/user-connected-to-game';
+import { UserDisconnectedFromGameInput } from '../inputs/user-disconnected-from-game';
 
 const pubSub = new PubSub();
 
@@ -67,13 +67,20 @@ export class UserGameResolver {
       return payload.userConnected.gameId === variables.input.gameId;
     },
   })
-  userConnected(@Args('input') input: UserConnectedToGame) {
-    const { gameId, userId } = input;
-    return withCancel(pubSub.asyncIterator('userConnected'), () =>
-      pubSub.publish('userDisconnected', {
+  @Auth()
+  userConnected(
+    @Args('input') input: UserConnectedToGameInput,
+    @Context() context,
+  ) {
+    const { gameId } = input;
+    const userId = context.req.user?.id;
+
+    return withCancel(pubSub.asyncIterator('userConnected'), async () => {
+      await this.gameConnectionService.disconnectFromGame({ userId, gameId });
+      await pubSub.publish('userDisconnected', {
         userDisconnected: { userId, gameId },
-      }),
-    );
+      });
+    });
   }
 
   @Subscription(() => DisconnectFromGameOutput, {
@@ -81,7 +88,7 @@ export class UserGameResolver {
       return payload.userDisconnected.gameId === variables.input.gameId;
     },
   })
-  userDisconnected(@Args('input') input: UserDisconnectedFromGame) {
+  userDisconnected(@Args('input') input: UserDisconnectedFromGameInput) {
     return pubSub.asyncIterator('userDisconnected');
   }
 }

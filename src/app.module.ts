@@ -8,34 +8,44 @@ import { join } from 'path';
 import { UserModule } from './modules/user/user.module';
 import { GameModule } from './modules/game/game.module';
 import { CharacterModule } from './modules/character/character.module';
-import { ClassModule } from './modules/class/class.module';
-import { RaceModule } from './modules/race/race.module';
+
 import { AuthModule } from './modules/auth/auth.module';
-import { SubraceModule } from './modules/subrace/subrace.module';
+
 import { EquipmentModule } from './modules/equipment/equipment.module';
 import { JwtService } from '@nestjs/jwt';
 import { RedisModule } from './modules/redis/redis.module';
+import { ConfigModule } from '@nestjs/config';
+
+const env =
+  {
+    test: 'test.env',
+  }[process.env.NODE_ENV] || '.env';
 
 @Module({
   imports: [
+    ConfigModule.forRoot({
+      envFilePath: env,
+    }),
     TypeOrmModule.forRoot(databaseConfigService.get()),
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
+      installSubscriptionHandlers: true,
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
       subscriptions: {
-        'graphql-ws': true,
-        'subscriptions-transport-ws': true,
+        'graphql-ws': {
+          onConnect: (context: any) => {
+            const { connectionParams, extra } = context;
+            extra.token = { token: connectionParams?.authToken };
+          },
+        },
+        // 'subscriptions-transport-ws': true,
       },
-      installSubscriptionHandlers: true,
     }),
     RedisModule,
     UserModule,
     GameModule,
     CharacterModule,
-    ClassModule,
-    RaceModule,
     AuthModule,
-    SubraceModule,
     EquipmentModule,
   ],
   controllers: [AppController],

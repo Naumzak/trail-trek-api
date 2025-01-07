@@ -2,8 +2,8 @@ import { Column, Entity, ManyToOne, OneToMany } from 'typeorm';
 import { BaseEntity } from '../../common/entity/base.entity';
 import { Size } from '../../common/enum/size';
 import { Language } from '../../common/enum/language';
-import { RaceEntity } from '../../race/entities/race.entity';
 import { CharacterEntity } from '../../character/entities/character.entity';
+import { RaceEntity } from './race.entity';
 
 @Entity('subrace')
 export class SubraceEntity extends BaseEntity {

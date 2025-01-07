@@ -28,7 +28,9 @@ export class GameConnectionService {
     users.push({ userId, characterId });
     await this.redisService.set(gameId, users);
 
-    return users;
+    const otherUsers = users.filter((user) => user.userId !== userId);
+
+    return otherUsers;
   }
 
   async disconnectFromGame({
@@ -54,6 +56,8 @@ export class GameConnectionService {
 
     if (users.length === 0) {
       await this.redisService.delete(gameId);
+    } else {
+      await this.redisService.set(gameId, users);
     }
 
     return users;
